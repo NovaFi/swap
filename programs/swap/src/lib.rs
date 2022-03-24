@@ -16,12 +16,12 @@ use anchor_spl::token;
 use solana_program::declare_id;
 use std::num::NonZeroU64;
 
-declare_id!("22Y43yTVxuUkoRKdm9thyRhQ3SdgQS7c7kB6UNCiaczD");
+declare_id!("4BMA9R25fdV8FDTR9zJPBP66At7rSNebnTACvkhrDT2y");
 
 // Associated token account for Pubkey::default.
 mod empty {
     use super::*;
-    declare_id!("HJt8Tjdsc9ms9i4WCZEzhzr4oyf3ANcdzXrNdLPFqm3M");
+    declare_id!("4BMA9R25fdV8FDTR9zJPBP66At7rSNebnTACvkhrDT2y");
 }
 
 #[program]
