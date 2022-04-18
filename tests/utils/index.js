@@ -22,25 +22,30 @@ const DEX_PID = new PublicKey("9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin");
 async function setupTwoMarkets({ provider }) {
   // Setup mints with initial tokens owned by the provider.
   const decimals = 6;
-  const [MINT_A, GOD_A] = await serumCmn.createMintAndVault(
+  /* const [MINT_A, GOD_A] = await serumCmn.createMintAndVault(
     provider,
     new BN(1000000000000000),
     undefined,
     decimals
-  );
-  const [MINT_B, GOD_B] = await serumCmn.createMintAndVault(
+  ); */
+  const MINT_A =new PublicKey("9cEBYHKxBK8CtF4kzvwdkTDSbQP9qRQbN6QqQRoTACNu"); 
+   const GOD_A =new PublicKey("HaZeMWeS6h5KTE5RRxRLAbZ9EVtwk5Z7ULVRi7bxF3Ji");
+ /*  const [MINT_B, GOD_B] = await serumCmn.createMintAndVault(
     provider,
     new BN(1000000000000000),
     undefined,
     decimals
-  );
-  const [USDC, GOD_USDC] = await serumCmn.createMintAndVault(
+  ); */
+  const MINT_B =new PublicKey("8PCRGRkyoVkbs9gWwj7kwynnnJadsULMq5YDEbbnkdZZ"); 
+  const GOD_B=new PublicKey("2nTNd69UFyapN5wBrEAE8Dh4hEcv9TYARkD4YGwmEY25");
+  /* const [USDC, GOD_USDC] = await serumCmn.createMintAndVault(
     provider,
     new BN(1000000000000000),
     undefined,
     decimals
-  );
-
+  ); */
+  const USDC =new PublicKey("8PCRGRkyoVkbs9gWwj7kwynnnJadsULMq5YDEbbnkdZZ"); 
+  const GOD_USDC =new PublicKey("2nTNd69UFyapN5wBrEAE8Dh4hEcv9TYARkD4YGwmEY25");  
   // Create a funded account to act as market maker.
   const amount = 100000 * 10 ** decimals;
   const marketMaker = await fundAccount({
@@ -85,7 +90,7 @@ async function setupTwoMarkets({ provider }) {
     asks,
     provider,
   });
-  MARKET_B_USDC = await setupMarket({
+ /*  MARKET_B_USDC = await setupMarket({
     baseMint: MINT_B,
     quoteMint: USDC,
     marketMaker: {
@@ -96,11 +101,11 @@ async function setupTwoMarkets({ provider }) {
     bids,
     asks,
     provider,
-  });
+  }); */
 
   return {
     marketA: MARKET_A_USDC,
-    marketB: MARKET_B_USDC,
+   // marketB: MARKET_B_USDC,
     marketMaker,
     mintA: MINT_A,
     mintB: MINT_B,
