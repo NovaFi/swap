@@ -5,7 +5,7 @@ cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [programs.mainnet]
-serum_swap = "22Y43yTVxuUkoRKdm9thyRhQ3SdgQS7c7kB6UNCiaczD"
+serum_swap = "FLagMLTR1wSDaZrhZKe1NKnt8V1XYte3NYoDgp7xBLd6"
 serum_dex = { address = "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", path = "./deps/serum-dex/dex/target/deploy/serum_dex.so" }
 
 [[test.genesis]]
@@ -13,4 +13,4 @@ address = "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin"
 program = "./deps/serum-dex/dex/target/deploy/serum_dex.so"
 
 [scripts]
-test = "mocha -t 1000000 tests/"
+test = "mocha -t 1000000 tests/test.js"
