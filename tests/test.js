@@ -19,14 +19,14 @@ describe("swap", () => {
 
   // Accounts used to setup the orderbook.
   let ORDERBOOK_ENV,
-    // Accounts used for A -> USDC swap transactions.
-    SWAP_A_USDC_ACCOUNTS,
-    // Accounts used for  USDC -> A swap transactions.
-    SWAP_USDC_A_ACCOUNTS,
-    // Serum DEX vault PDA for market A/USDC.
-    marketAVaultSigner,
-    // Serum DEX vault PDA for market B/USDC.
-    marketBVaultSigner;
+  // Accounts used for A -> USDC swap transactions.
+  SWAP_A_USDC_ACCOUNTS,
+  // Accounts used for  USDC -> A swap transactions.
+  SWAP_USDC_A_ACCOUNTS,
+  // Serum DEX vault PDA for market A/USDC.
+  marketAVaultSigner,
+  // Serum DEX vault PDA for market B/USDC.
+  marketBVaultSigner;
 
   // Open orders accounts on the two markets for the provider.
   const openOrdersA = anchor.web3.Keypair.generate();
@@ -83,12 +83,13 @@ console.log("openOrdersA.publicKey ",openOrdersA.publicKey.toBase58())
    it("Swaps from USDC to Token A", async () => {
     const marketA = ORDERBOOK_ENV.marketA;
       // Swap exactly enough USDC to get 1.2 A tokens (best offer price is 6.041 USDC).
-  
+      let tx;
    const [tokenAChange, usdcChange] = await withBalanceChange(
       program.provider,
       [ORDERBOOK_ENV.godA,ORDERBOOK_ENV.godUsdc],
-      async () => {
-        await program.rpc.swap(Side.Bid, new BN(1000000), new BN(1.0), {
+    
+     async () => {
+       tx= await program.rpc.swap(Side.Bid, new BN(1000000), new BN(1.0), {
           accounts: SWAP_USDC_A_ACCOUNTS,
           instructions: [
             // First order to this market so one must create the open orders account.
@@ -103,8 +104,11 @@ console.log("openOrdersA.publicKey ",openOrdersA.publicKey.toBase58())
           ],
           signers: [openOrdersA], 
         });
+       
       }
+
     ); 
+    console.log("swap B to A tx ",tx)
   }); 
  
   it("Swaps from Token A to USDC", async () => {
@@ -113,12 +117,12 @@ console.log("openOrdersA.publicKey ",openOrdersA.publicKey.toBase58())
     const swapAmount = 1.1;
     const bestBidPrice = 1.004;
     const amountToFill = swapAmount * bestBidPrice;
-
+let tx;
   const [tokenAChange, usdcChange] = await withBalanceChange(
       program.provider,
       [ORDERBOOK_ENV.godA,ORDERBOOK_ENV.godUsdc],
       async () => {
-        await program.rpc.swap(
+       tx= await program.rpc.swap(
           Side.Ask,
           new BN(1000000),
           {
@@ -134,8 +138,9 @@ console.log("openOrdersA.publicKey ",openOrdersA.publicKey.toBase58())
       }
     ); 
 
- 
+    console.log("swap A to B tx ",tx)
   });
+  
 });  
 
 // Side rust enum used for the program's RPC API.
