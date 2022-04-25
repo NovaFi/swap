@@ -9,11 +9,12 @@ const { Market } = require("@project-serum/serum");
 const { PublicKey } = require("@solana/web3.js");
 const utils = require("./utils");
 
-async function setupMarket(program){
+async function setupMarket(program, a){
 
 let ORDERBOOK_ENV = await utils.setupTwoMarkets({
     provider: program.provider,
-  });
+    
+  } , a);
 
   return ORDERBOOK_ENV;
 }

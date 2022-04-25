@@ -19,24 +19,19 @@ const PublicKey = web3.PublicKey;
 const SystemProgram = web3.SystemProgram;
 const DEX_PID = new PublicKey("7RA6GmbCYRBB66QfuDa1peHAE2fWDbeR7Vr2sGmNtGFC");
 
-async function setupTwoMarkets({ provider }) {
+async function setupTwoMarkets({ provider  } , accounts) {
   // Setup mints with initial tokens owned by the provider.
   const decimals = 6;
-   const [MINT_A, GOD_A] = await serumCmn.createMintAndVault(
-    provider,
-    new BN(1000000000000000),
-    undefined,
-    decimals
-  ); 
+  console.log(accounts[0][0]);
+   const MINT_A = new PublicKey(accounts[0][0]);
+   
+   const GOD_A = new PublicKey(accounts[0][1]);
 /*   const MINT_A =new PublicKey("9cEBYHKxBK8CtF4kzvwdkTDSbQP9qRQbN6QqQRoTACNu"); 
    const GOD_A =new PublicKey("HaZeMWeS6h5KTE5RRxRLAbZ9EVtwk5Z7ULVRi7bxF3Ji"); */
   console.log("MINT_A :",MINT_A.toBase58()," GOD_A :",GOD_A.toBase58())
-  const [MINT_B, GOD_B] = await serumCmn.createMintAndVault(
-    provider,
-    new BN(1000000000000000),
-    undefined,
-    decimals
-  ); 
+  const MINT_B = new PublicKey(accounts[1][0]);
+   
+  const GOD_B = new PublicKey(accounts[1][1]);
 /*   const MINT_B =new PublicKey("8PCRGRkyoVkbs9gWwj7kwynnnJadsULMq5YDEbbnkdZZ"); 
   const GOD_B=new PublicKey("2nTNd69UFyapN5wBrEAE8Dh4hEcv9TYARkD4YGwmEY25"); */
   console.log("MINT_B :",MINT_B.toBase58()," GOD_B :",GOD_B.toBase58())
