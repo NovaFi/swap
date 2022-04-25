@@ -6,10 +6,10 @@ wallet = "~/.config/solana/id.json"
 
 [programs.mainnet]
 serum_swap = "FLagMLTR1wSDaZrhZKe1NKnt8V1XYte3NYoDgp7xBLd6"
-serum_dex = { address = "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin", path = "./deps/serum-dex/dex/target/deploy/serum_dex.so" }
+serum_dex = { address = "7RA6GmbCYRBB66QfuDa1peHAE2fWDbeR7Vr2sGmNtGFC", path = "./deps/serum-dex/dex/target/deploy/serum_dex.so" }
 
 [[test.genesis]]
-address = "9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin"
+address = "7RA6GmbCYRBB66QfuDa1peHAE2fWDbeR7Vr2sGmNtGFC"
 program = "./deps/serum-dex/dex/target/deploy/serum_dex.so"
 
 [scripts]

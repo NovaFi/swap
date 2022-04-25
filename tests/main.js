@@ -9,9 +9,14 @@ async function main(){
     process.env.ANCHOR_PROVIDER_URL = "http://localhost:8899"
     process.env.ANCHOR_WALLET = "../../owner" 
     anchor.setProvider(anchor.Provider.env());
+    const idl=require('./serum_swap.json') 
+    // Address of the deployed program.
+    const programId = new anchor.web3.PublicKey("ERAPfuuzjHagdTY6WuJfqnuzc34QV4uayCxcjJdyZjYN");
 
+    // Generate the program client from IDL.
+    const program = new anchor.Program(idl, programId);
     // Swap program client.
-    const program = anchor.workspace.SerumSwap;
+   // const program = anchor.workspace.SerumSwap;
     // lead and create market 
 
     let tokens =
