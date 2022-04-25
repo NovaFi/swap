@@ -9,15 +9,9 @@ const { Market } = require("@project-serum/serum");
 const { PublicKey } = require("@solana/web3.js");
 const utils = require("./utils");
 
-async function swapBtoA(ORDERBOOK_ENV){
+async function swapBtoA(ORDERBOOK_ENV,program){
 
-// Configure the client to use the local cluster.
- process.env.ANCHOR_PROVIDER_URL = "http://localhost:8899"
- process.env.ANCHOR_WALLET = "/Users/karima/.config/solana/id.json" 
-anchor.setProvider(anchor.Provider.env());
 
-// Swap program client.
-const program = anchor.workspace.SerumSwap;
 const marketA = ORDERBOOK_ENV.marketA;
 //const marketB = ORDERBOOK_ENV.marketB;
 

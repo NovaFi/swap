@@ -1,28 +1,10 @@
-const assert = require("assert");
 const anchor = require("@project-serum/anchor");
 const BN = anchor.BN;
-const OpenOrders = require("@project-serum/serum").OpenOrders;
-const TOKEN_PROGRAM_ID = require("@solana/spl-token").TOKEN_PROGRAM_ID;
 const serumCmn = require("@project-serum/common");
 
-const { Market } = require("@project-serum/serum");
-const { PublicKey } = require("@solana/web3.js");
-const utils = require("./utils");
 
-async function swapAtoB(ORDERBOOK_ENV,SWAP_A_USDC_ACCOUNTS){
+async function swapAtoB(ORDERBOOK_ENV,SWAP_A_USDC_ACCOUNTS,program){
 
-// Configure the client to use the local cluster.
- process.env.ANCHOR_PROVIDER_URL = "http://localhost:8899"
- process.env.ANCHOR_WALLET = "/Users/karima/.config/solana/id.json" 
-anchor.setProvider(anchor.Provider.env());
-
-// Swap program client.
-const program = anchor.workspace.SerumSwap;
-const marketA = ORDERBOOK_ENV.marketA;
-    // Swap out A tokens for USDC.
-    const swapAmount = 1.1;
-    const bestBidPrice = 1.004;
-    const amountToFill = swapAmount * bestBidPrice;
     let tx;
   const [tokenAChange, usdcChange] = await withBalanceChange(
       program.provider,
