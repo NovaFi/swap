@@ -6,8 +6,8 @@
 //! as the user's first trade or via the explicit `init_account` and
 //! `close_account` instructions provided here, which can be included in
 //! transactions.
-pub extern crate karima_anchor_lang as anchor_lang;
-pub extern crate karima_anchor_spl as anchor_spl;
+pub extern crate NT_anchor_lang as anchor_lang;
+pub extern crate NT_anchor_spl as anchor_spl;
 use anchor_lang::prelude::*;
 use anchor_spl::dex;
 use anchor_spl::dex::serum_dex::instruction::SelfTradeBehavior;
@@ -17,7 +17,8 @@ use anchor_spl::token;
 use solana_program::declare_id;
 use std::num::NonZeroU64;
 
-declare_id!("22Y43yTVxuUkoRKdm9thyRhQ3SdgQS7c7kB6UNCiaczD");
+//declare_id!("22Y43yTVxuUkoRKdm9thyRhQ3SdgQS7c7kB6UNCiaczD");//mainnet
+declare_id!("EdS4KQBs2bvdXeHsL6RUTCupfWA4P8wWT3uHhX6kswGb");//devnet
 
 // Associated token account for Pubkey::default.
 mod empty {
@@ -468,7 +469,7 @@ impl<'info> OrderbookClient<'info> {
         srm_msrm_discount: Option<AccountInfo<'info>>,
     ) -> ProgramResult {
         let limit_price = 1;
-        msg!("sell 0");
+        msg!("sell 0 {:?}",&dex::ID);
         let max_coin_qty = {
             // The loaded market must be dropped before CPI.
             let market = MarketState::load(&self.market.market, &dex::ID)?;
