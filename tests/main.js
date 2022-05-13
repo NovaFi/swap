@@ -13,7 +13,7 @@ async function main(){
     anchor.setProvider(anchor.Provider.env());
     const idl=require('./serum_swap.json') 
     // Address of the deployed program.
-    const programId = new anchor.web3.PublicKey("ERAPfuuzjHagdTY6WuJfqnuzc34QV4uayCxcjJdyZjYN");
+    const programId = new anchor.web3.PublicKey("CxXDXjGBJ6RwMKKLqkd9KCAR5yfswNd8iXcQPmFFeDvU");
 
     // Generate the program client from IDL.
     const program = new anchor.Program(idl, programId);
