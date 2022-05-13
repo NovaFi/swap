@@ -19,7 +19,7 @@ const PublicKey = web3.PublicKey;
 const SystemProgram = web3.SystemProgram;
 const DEX_PID = new PublicKey("7RA6GmbCYRBB66QfuDa1peHAE2fWDbeR7Vr2sGmNtGFC");
 
-async function setupTwoMarkets({ provider  } , accounts) {
+async function setupTwoMarkets({ provider  } , accounts,PoolM) {
   // Setup mints with initial tokens owned by the provider.
   const decimals = 6;
   console.log(accounts[0][0]);
@@ -35,15 +35,15 @@ async function setupTwoMarkets({ provider  } , accounts) {
 /*   const MINT_B =new PublicKey("8PCRGRkyoVkbs9gWwj7kwynnnJadsULMq5YDEbbnkdZZ"); 
   const GOD_B=new PublicKey("2nTNd69UFyapN5wBrEAE8Dh4hEcv9TYARkD4YGwmEY25"); */
   console.log("MINT_B :",MINT_B.toBase58()," GOD_B :",GOD_B.toBase58())
- const [USDC, GOD_USDC] = await serumCmn.createMintAndVault(
+/*   const [USDC, GOD_USDC] = await serumCmn.createMintAndVault(
     provider,
     new BN(1000000000000000),
     undefined,
     decimals
-  ); 
-  /*   const USDC =new PublicKey("8PCRGRkyoVkbs9gWwj7kwynnnJadsULMq5YDEbbnkdZZ"); 
-  const GOD_USDC =new PublicKey("2nTNd69UFyapN5wBrEAE8Dh4hEcv9TYARkD4YGwmEY25");  */ 
-  console.log("USDC :",USDC.toBase58()," GOD_USDC :",GOD_USDC.toBase58())
+  );   */
+    const USDC =new PublicKey(accounts[1][0]); 
+  const GOD_USDC =new PublicKey(accounts[1][1]);   
+  //console.log("USDC :",USDC.toBase58()," GOD_USDC :",GOD_USDC.toBase58())
   // Create a funded account to act as market maker.
   const amount = 100000 * 10 ** decimals;
   const marketMaker = await fundAccount({
@@ -52,6 +52,7 @@ async function setupTwoMarkets({ provider  } , accounts) {
       { god: GOD_A, mint: MINT_A, amount, decimals },
       { god: GOD_USDC, mint: USDC, amount, decimals },
     ],
+    accounts
   });
 
   // Setup A/USDC and B/USDC markets with resting orders.
@@ -90,6 +91,7 @@ console.log(" marketMaker.tokens[USDC.toString()]"+ marketMaker.tokens[USDC.toSt
     bids,
     asks,
     provider,
+    PoolM
   });
  /*  MARKET_B_USDC = await setupMarket({
     baseMint: MINT_B,
@@ -125,7 +127,7 @@ console.log(" marketMaker.tokens[USDC.toString()]"+ marketMaker.tokens[USDC.toSt
 //
 // Returns a client that can be used to interact with the market
 // (and some other data, e.g., the mints and market maker account).
-async function initOrderbook({ provider, bids, asks }) {
+/* async function initOrderbook({ provider, bids, asks }) {
   if (!bids || !asks) {
      asks = [
       [6.041, 7.8],
@@ -171,6 +173,7 @@ async function initOrderbook({ provider, bids, asks }) {
       { god: GOD_A, mint: MINT_A, amount, decimals },
       { god: GOD_USDC, mint: USDC, amount, decimals },
     ],
+ 
   });
 
   marketClient = await setupMarket({
@@ -192,34 +195,22 @@ async function initOrderbook({ provider, bids, asks }) {
     quoteMint: USDC,
     marketMaker,
   };
-}
+} */
 
-async function fundAccount({ provider, mints }) {
-  //const MARKET_MAKER = new Account([109,99,217,128,207,253,116,213,227,119,220,79,71,175,76,95,20,59,25,200,251,77,47,58,119,49,111,95,139,131,179,232,53,115,228,140,143,106,4,159,137,72,176,56,0,45,221,164,84,55,26,190,115,116,26,18,40,7,168,118,198,193,156,5]);
-  const MARKET_MAKER = new Account();
+async function fundAccount({ provider, mints,accounts }) {
+  const MARKET_MAKER = new Account([245,11,125,26,254,4,61,25,26,1,199,155,76,74,153,190,189,227,61,79,168,126,236,57,123,13,23,168,199,8,250,37,146,246,133,162,237,90,197,223,86,250,117,247,2,38,173,224,232,224,40,168,67,138,21,112,215,95,29,119,188,125,19,199]);
   console.log("MARKET_MAKER ",MARKET_MAKER.publicKey.toBase58())
   const marketMaker = {
     tokens: {},
     account: MARKET_MAKER,
   };
 
-  // Transfer lamports to market maker.
-  await provider.send(
-    (() => {
-      const tx = new Transaction();
-      tx.add(
-        SystemProgram.transfer({
-          fromPubkey: provider.wallet.publicKey,
-          toPubkey: MARKET_MAKER.publicKey,
-          lamports: 1000000000,
-        })
-      );
-      return tx;
-    })()
-  ); 
-
+  marketMaker.tokens[accounts[0][0]] = accounts[0][2];
+    marketMaker.tokens[accounts[1][0]] = accounts[1][2];
+/*
   // Transfer SPL tokens to the market maker.
   for (let k = 0; k < mints.length; k += 1) {
+    
     const { mint, god, amount, decimals } = mints[k];
     let MINT_A = mint;
     let GOD_A = god;
@@ -254,7 +245,7 @@ console.log(" marketMakerTokenA ",marketMakerTokenA.toBase58()," MINT_A :",MINT_
     );
 
     marketMaker.tokens[mint.toString()] = marketMakerTokenA;
-  }
+  }*/
 
   return marketMaker;
 }
@@ -266,6 +257,7 @@ async function setupMarket({
   quoteMint,
   bids,
   asks,
+  PoolM
 }) {
    const marketAPublicKey = await listMarket({
     connection: provider.connection,
@@ -276,6 +268,7 @@ async function setupMarket({
     quoteLotSize: 100,
     dexProgramId: DEX_PID,
     feeRateBps: 0,
+    PoolM
   }); 
   console.log("baseMint :"+baseMint)
   console.log("marketAPublicKey :"+marketAPublicKey.toBase58())
@@ -296,7 +289,7 @@ async function setupMarket({
       signers,
     } = await MARKET_A_USDC.makePlaceOrderTransaction(provider.connection, {
       owner: marketMaker.account,
-      payer: marketMaker.baseToken,
+      payer: new PublicKey(marketMaker.baseToken),
       side: "sell",
       price: ask[0],
       size: ask[1],
@@ -309,7 +302,7 @@ async function setupMarket({
     });
     await provider.send(transaction, signers.concat(marketMaker.account));
   }
-console.log("marketMaker.quoteToken  ",marketMaker.quoteToken.toBase58())
+console.log("marketMaker.quoteToken  ",marketMaker.quoteToken)
   for (let k = 0; k < bids.length; k += 1) {
     let bid = bids[k];
     const {
@@ -317,7 +310,7 @@ console.log("marketMaker.quoteToken  ",marketMaker.quoteToken.toBase58())
       signers,
     } = await MARKET_A_USDC.makePlaceOrderTransaction(provider.connection, {
       owner: marketMaker.account,
-      payer: marketMaker.quoteToken,
+      payer: new PublicKey(marketMaker.quoteToken),
       side: "buy",
       price: bid[0],
       size: bid[1],
@@ -343,49 +336,50 @@ async function listMarket({
   quoteLotSize,
   dexProgramId,
   feeRateBps,
+  PoolM
 }) {
-  const market = new Account();
-  const requestQueue = new Account();
-  const eventQueue = new Account();
-  const bids = new Account();
-  const asks = new Account();
-  const baseVault = new Account();
-  const quoteVault = new Account();
+  const market = new Account(PoolM.market);
+  const requestQueue = new Account(PoolM.requestQueue);
+  const eventQueue = new Account(PoolM.eventQueue);
+  const bids = new Account(PoolM.bids);
+  const asks = new Account(PoolM.asks);
+  const baseVault = new Account(PoolM.baseVault);
+  const quoteVault = new Account(PoolM.quoteVault);
   const quoteDustThreshold = new BN(100);
 
   const [vaultOwner, vaultSignerNonce] = await getVaultOwnerAndNonce(
     market.publicKey,
     dexProgramId
   );
-console.log("vaultOwner ",vaultOwner.toBase58())
+
 console.log("baseVault ",baseVault.publicKey.toBase58())
 console.log("quoteVault ",quoteVault.publicKey.toBase58())
   const tx1 = new Transaction();
   tx1.add(
-    SystemProgram.createAccount({
+     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
       newAccountPubkey: baseVault.publicKey,
       lamports: await connection.getMinimumBalanceForRentExemption(165),
       space: 165,
       programId: TOKEN_PROGRAM_ID,
-    }),
+    }), 
     SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
       newAccountPubkey: quoteVault.publicKey,
       lamports: await connection.getMinimumBalanceForRentExemption(165),
       space: 165,
       programId: TOKEN_PROGRAM_ID,
-    }),
+    }), 
     TokenInstructions.initializeAccount({
       account: baseVault.publicKey,
       mint: baseMint,
       owner: vaultOwner,
-    }),
-    TokenInstructions.initializeAccount({
+    }), 
+      TokenInstructions.initializeAccount({
       account: quoteVault.publicKey,
       mint: quoteMint,
       owner: vaultOwner,
-    })
+    })  
   );
 
   const tx2 = new Transaction();
@@ -448,21 +442,24 @@ console.log("quoteVault ",quoteVault.publicKey.toBase58())
 
   const signedTransactions = await signTransactions({
     transactionsAndSigners: [
-      { transaction: tx1, signers: [baseVault, quoteVault] },
-      {
+      { transaction: tx1, signers: [baseVault,quoteVault ] },
+       {
         transaction: tx2,
         signers: [market, requestQueue, eventQueue, bids, asks],
-      },
+      },  
     ],
     wallet,
     connection,
   });
+
   for (let signedTransaction of signedTransactions) {
-    await sendAndConfirmRawTransaction(
+    let tx =await sendAndConfirmRawTransaction(
       connection,
       signedTransaction.serialize()
     );
+ 
   }
+
   const acc = await connection.getAccountInfo(market.publicKey);
 
   return market.publicKey;
@@ -494,9 +491,11 @@ async function sendAndConfirmRawTransaction(
   raw,
   commitment = "recent"
 ) {
+  
   let tx = await connection.sendRawTransaction(raw, {
     skipPreflight: true,
   });
+  console.log("tx ",tx)
   return await connection.confirmTransaction(tx, commitment);
 }
 
@@ -519,7 +518,7 @@ async function getVaultOwnerAndNonce(marketPublicKey, dexProgramId = DEX_PID) {
 module.exports = {
   fundAccount,
   setupMarket,
-  initOrderbook,
+  //initOrderbook,
   setupTwoMarkets,
   DEX_PID,
   getVaultOwnerAndNonce,

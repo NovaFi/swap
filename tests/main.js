@@ -3,6 +3,8 @@ const { swapAtoB } = require("./swapAToB");
 const { swapBtoA } = require("./swapBToA");
 const anchor = require("@project-serum/anchor");
 const { PublicKey } = require("@solana/web3.js");
+const { loadKey } = require("./loadKey");
+const { getPool } = require("./getPool");
 
 async function main(){
     // Configure the client to use the local cluster.
@@ -20,29 +22,56 @@ async function main(){
     // lead and create market 
 
     let tokens =
-    [
-    ["5Nm6Xgd5QWuWj1o1GASo38FzsWcX3ioHrLyHqJkpFJhJ", "DCCPZdVV7BCwxChNqDdkd2SFbQ2hJP2CbMWxUg7qys8H"],
-    ["8diZPJpnfPm2A82frDpGzYR4KeUNvgYuyAuqCpFJxMsi", "FinJNM9L1gmfwdkvEzDcXGLGCxeyUSvdYbrCzScwCiyw"],
-    ["9uaetUexhEBtqhGdszpm82gvpCDsjPRCKP8iXrzW1JLH", "G8Bi1neVveCD3MfuiWkZCHSykys74FHmHyMwLGmQRph"],
-    ["CbNnyMCgUxrrMidGYbD6eKfdJXP9U7ntsYVN2FbM9L73", "9FPMVMEc2j8CihUvdKLFx7kQHkkXnMEpiCjhuLB6Q5vG"],
-    ["Dfe8TbWvRgEsZb4TYdRAS6TeH62zEunB3wgAa7yLcYZn", "Agw3Qt5KQKaW5VsD797bYm5Mh1arRckPK54R2zawkhia"],
-    ["EcjCh2FPxDcJNxgesWHdthXDo6fUUtKjTysxRhmA9MZN", "28RjecFzynm6zSbJCpiDp7oGwSEZZarmw4JtMmFnJZ42"],
-    ["Hyn7zDaApyfinKSJz1NN3i5knP9GZuqNGmYCcitPWbHW", "3k3UT9nGfzLrBYmrBskU71ZSZTdhK7hS2ptBD5cpshYy"]];
+    [//mint, splu(owner =owner), marketmakerMint[i](owner =marketMaker)
+    ["5Nm6Xgd5QWuWj1o1GASo38FzsWcX3ioHrLyHqJkpFJhJ", "B9De1gsTXS4qeE52zeFyurtcMwzKbgYmma9T3ndzNtpm","5gNEW5xPQQzW5TfxUURs6RZ2oicxuLmhwmpXvBtuRa8q"],
+    ["8diZPJpnfPm2A82frDpGzYR4KeUNvgYuyAuqCpFJxMsi", "DiGpa4HDKSLuNNDBbAG8wrfhDYHyJ3UDuMXyHibb5Vcz","5R5aJSNEcFLWDrwrJvXwugCsRDW7yY9cQZZwvSGuxJU1"],
+    ["9uaetUexhEBtqhGdszpm82gvpCDsjPRCKP8iXrzW1JLH", "7aQufWydQHBFzY66HTc76ig9YTzCdy2NneeHVrXi29a2","9FPr228yQbpJU3xVuLXL6yVQgAcNfz34SpH8vkgp4KxF"],
+    ["CbNnyMCgUxrrMidGYbD6eKfdJXP9U7ntsYVN2FbM9L73", "36RoBFxrarrxiPBGTivxFMPr3MjpBYNh2QGiVgy3ouo4","Cgv75askwAFd8fMrE4BZvDSspCDwdXPHH9EDaLhZK6qv"],
+    ["Dfe8TbWvRgEsZb4TYdRAS6TeH62zEunB3wgAa7yLcYZn", "AzCehwFKFjSf2mS2x62Z3Pg95b9eZ7vcb6gYwUnBUbaN","GqyScLsJwcy5Q8GjDsAKRpcShVwK542uiQ8vmyX8se9s"],
+    ["EcjCh2FPxDcJNxgesWHdthXDo6fUUtKjTysxRhmA9MZN", "Dur7eZYUixw5bZUpUK3i4uFYXgVTY7f7pCTekXjGd5L5","C9Jj1utRrkgy52fcZPzTRZc3pBU4WA1zNhMYz6dbJcWA"],
+    ["Hyn7zDaApyfinKSJz1NN3i5knP9GZuqNGmYCcitPWbHW", "EEt3KceS4vzNCtmdSzhbDyX4k1s9u71p9enZPW3TFJps","EYDfaXHK6Kg6GJeCCPyNnjE3EpKKQ8DY41a88k8YzXzh"]];
 
-let array = [ 0 , 1 , 2, 3,4 ,5,6];  
-
-    var result = tokens.flatMap(
+    var fs = require('fs');
+let allPool=[];
+let json;
+    var result =await  tokens.flatMap(
         (v, i) => tokens.slice(i+1).map( w => [v , w] )
     ).forEach(
         async a => {
+         /*    console.log(a)
             
-            let ORDERBOOK_ENV= await setupMarket(program , a);
-   // swap B to A
+            let item=await loadKey(a);
+            allPool.push(item)
+
+return;   */
+
+        let filePool = fs.readFileSync('poolConfig.json');
+        let pool = JSON.parse(filePool);
+       // console.log(pool[0].market);
+        let PoolM=await getPool(a,pool);
+        //console.log("PoolM ",PoolM)
+
+        let ORDERBOOK_ENV= await setupMarket(program , a,PoolM);
+//console.log("ORDERBOOK_ENV ",ORDERBOOK_ENV);
+
+        // swap B to A
         const SWAP_A_USDC_ACCOUNTS=await swapBtoA(ORDERBOOK_ENV,program);
-   // swap A to B
-             await swapAtoB(ORDERBOOK_ENV,SWAP_A_USDC_ACCOUNTS,program);
-        }
+       
+        // swap A to B
+        await swapAtoB(ORDERBOOK_ENV,SWAP_A_USDC_ACCOUNTS,program);
+        
+        }  
     )
-   
+     /* json = JSON.stringify(allPool)
+    fs.writeFile('poolConfig.json', json, function (err) {
+        if (err) throw err;
+        //console.log('File is created successfully.');
+        });  */
+  /*   let rawdata = fs.readFileSync('newfile.json');
+        let student = JSON.parse(rawdata);
+console.log(student[0].market); */
 }
+
+
 main();
+

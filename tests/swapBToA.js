@@ -24,6 +24,8 @@ console.log("vaultSignerA ",vaultSignerA.toBase58())
 // marketBVaultSigner = vaultSignerB;
 // Open orders accounts on the two markets for the provider.
 const openOrdersA = anchor.web3.Keypair.generate();
+console.log("ORDERBOOK_ENV.godUsdc ",ORDERBOOK_ENV.godUsdc.toBase58())
+
 console.log("openOrdersA.publicKey ",openOrdersA.publicKey.toBase58())
 const SWAP_USDC_A_ACCOUNTS = {
   market: {
