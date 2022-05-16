@@ -37,10 +37,16 @@ const values = Array.from(map.values());
     new Account().secretKey.forEach(ele=>{
         quoteVault.push(ele)
     })
+    let swapAccount=[];
+    new Account().secretKey.forEach(ele=>{
+        swapAccount.push(ele)
+    })
     
     let item={
         mintA:accounts[0][0],
         mintB:accounts[1][0],
+        spluA:accounts[0][1],
+        spluB:accounts[1][1],
         marketMakerTokenA:accounts[0][2],
         marketMakerTokenB:accounts[1][2],
         market,
@@ -49,7 +55,8 @@ const values = Array.from(map.values());
         bids,
         asks,
         baseVault,
-        quoteVault
+        quoteVault,
+        swapAccount,
     }
  
 return item;
