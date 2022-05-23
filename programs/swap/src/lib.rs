@@ -70,38 +70,29 @@ pub mod serum_swap {
 
         // Not used for direct swaps.
         min_exchange_rate.quote_decimals = 0;
-        msg!("swap 0");
         // Optional referral account (earns a referral fee).
         let referral = ctx.remaining_accounts.iter().next().map(Clone::clone);
-        msg!("swap 1");
         // Side determines swap direction.
         let (from_token, to_token) = match side {
             Side::Bid => (&ctx.accounts.pc_wallet, &ctx.accounts.market.coin_wallet),
             Side::Ask => (&ctx.accounts.market.coin_wallet, &ctx.accounts.pc_wallet),
         };
-        msg!("swap 2");
         // Token balances before the trade.
         let from_amount_before = token::accessor::amount(from_token)?;
         let to_amount_before = token::accessor::amount(to_token)?;
-        msg!("swap 3 from_token {:?} to_token {:?} ",from_token,to_token);
         // Execute trade.
         let orderbook: OrderbookClient<'info> = (&*ctx.accounts).into();
-        msg!("swap 4 amount {:?}",amount);
         match side {
             Side::Bid => orderbook.buy(amount, None)?,
             Side::Ask => orderbook.sell(amount, None)?,
         };
-        msg!("swap 5");
         orderbook.settle(referral)?;
-        msg!("swap 6");
         // Token balances after the trade.
         let from_amount_after = token::accessor::amount(from_token)?;
         let to_amount_after = token::accessor::amount(to_token)?;
-        msg!("swap 7 from_amount_after {:?} to_amount_after {:?}",from_amount_after,to_amount_after);
         //  Calculate the delta, i.e. the amount swapped.
         let from_amount = from_amount_before.checked_sub(from_amount_after).unwrap();
         let to_amount = to_amount_after.checked_sub(to_amount_before).unwrap();
-        msg!("swap 8: before-after-from {:?} before-after-to {:?}",from_amount,to_amount);
         // Safety checks.
         apply_risk_checks(DidSwap {
             authority: *ctx.accounts.authority.key,
@@ -216,8 +207,6 @@ pub mod serum_swap {
 fn apply_risk_checks(event: DidSwap) -> Result<()> {
     // Emit the event for client consumption.
     emit!(event);
-    msg!("apply_risk_checks ");
-    msg!("apply_risk_checks {:?}",event.to_amount);
     if event.to_amount == 0 {
         return Err(ErrorCode::ZeroSwap.into());
     }
@@ -469,15 +458,12 @@ impl<'info> OrderbookClient<'info> {
         srm_msrm_discount: Option<AccountInfo<'info>>,
     ) -> ProgramResult {
         let limit_price = 1;
-        msg!("sell 0 {:?}",&dex::ID);
         let max_coin_qty = {
             // The loaded market must be dropped before CPI.
             let market = MarketState::load(&self.market.market, &dex::ID)?;
             coin_lots(&market, base_amount)
         };
-        msg!("sell 1 max_coin_qty {:?} limit_price {:?}",max_coin_qty,limit_price);
         let max_native_pc_qty = u64::MAX;
-        msg!("sell 111 max_native_pc_qty {:?}  ",max_native_pc_qty);
         self.order_cpi(
             limit_price,
             max_coin_qty,
@@ -500,8 +486,6 @@ impl<'info> OrderbookClient<'info> {
         let limit_price = u64::MAX;
         let max_coin_qty = u64::MAX;
         let max_native_pc_qty = quote_amount;
-        msg!("buy 1 quote_amount {:?}",quote_amount);
-        msg!("buy 2 limit_price {:?} max_coin_qty {:?} max_native_pc_qty {:?} ",limit_price,max_coin_qty,max_native_pc_qty);
         self.order_cpi(
             limit_price,
             max_coin_qty,
@@ -533,12 +517,10 @@ impl<'info> OrderbookClient<'info> {
         // bound on the number of matching cycles the program can perform
         // before giving up and posting the remaining unmatched order.
         let limit = 65535;
-       msg!("order_cpi 1");
         let mut ctx = CpiContext::new(self.dex_program.clone(), self.clone().into());
         if let Some(srm_msrm_discount) = srm_msrm_discount {
             ctx = ctx.with_remaining_accounts(vec![srm_msrm_discount]);
         }
-        msg!("order_cpi 2");
         dex::new_order_v3(
             ctx,
             side.into(),
