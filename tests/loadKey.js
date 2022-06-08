@@ -41,6 +41,10 @@ const values = Array.from(map.values());
     new Account().secretKey.forEach(ele=>{
         swapAccount.push(ele)
     })
+    let poolMint=[];
+    new Account().secretKey.forEach(ele=>{
+        poolMint.push(ele)
+    })
     
     let item={
         mintA:accounts[0][0],
@@ -57,6 +61,7 @@ const values = Array.from(map.values());
         baseVault,
         quoteVault,
         swapAccount,
+        poolMint
     }
  
 return item;

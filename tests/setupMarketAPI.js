@@ -10,7 +10,7 @@ const { PublicKey } = require("@solana/web3.js");
 const utils = require("./utils");
 
 async function setupMarket(program, a,PoolM){
-
+console.log("aaaaaaaaaaaaa ",a,"     pooollllll ",PoolM)
 let ORDERBOOK_ENV = await utils.setupTwoMarkets({
     provider: program.provider,
     

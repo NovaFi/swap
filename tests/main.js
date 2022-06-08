@@ -9,12 +9,14 @@ const { getPool } = require("./getPool");
 async function main(){
     // Configure the client to use the local cluster.
     process.env.ANCHOR_PROVIDER_URL = "http://localhost:8899"
+    //process.env.ANCHOR_PROVIDER_URL = "https://api.testnet.solana.com"
     process.env.ANCHOR_WALLET = "../../owner" 
     anchor.setProvider(anchor.Provider.env());
     const idl=require('./serum_swap.json') 
     // Address of the deployed program.
+    
     const programId = new anchor.web3.PublicKey("CxXDXjGBJ6RwMKKLqkd9KCAR5yfswNd8iXcQPmFFeDvU");
-
+   // const programId = new anchor.web3.PublicKey("EdS4KQBs2bvdXeHsL6RUTCupfWA4P8wWT3uHhX6kswGb")
     // Generate the program client from IDL.
     const program = new anchor.Program(idl, programId);
     // Swap program client.
@@ -38,12 +40,12 @@ let json;
         (v, i) => tokens.slice(i+1).map( w => [v , w] )
     ).forEach(
         async a => {
-         /*    console.log(a)
+       /*   console.log(a)
             
             let item=await loadKey(a);
             allPool.push(item)
 
-return;   */
+        return;   */ 
 
         let filePool = fs.readFileSync('poolConfig.json');
         let pool = JSON.parse(filePool);
@@ -62,11 +64,11 @@ return;   */
         
         }  
     )
-     /* json = JSON.stringify(allPool)
+   /*  json = JSON.stringify(allPool)
     fs.writeFile('poolConfig.json', json, function (err) {
         if (err) throw err;
         //console.log('File is created successfully.');
-        });  */
+        });  */ 
   /*   let rawdata = fs.readFileSync('newfile.json');
         let student = JSON.parse(rawdata);
 console.log(student[0].market); */

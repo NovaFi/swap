@@ -17,7 +17,8 @@ const Account = web3.Account;
 const Transaction = web3.Transaction;
 const PublicKey = web3.PublicKey;
 const SystemProgram = web3.SystemProgram;
-const DEX_PID = new PublicKey("7RA6GmbCYRBB66QfuDa1peHAE2fWDbeR7Vr2sGmNtGFC");
+const DEX_PID = new PublicKey("7RA6GmbCYRBB66QfuDa1peHAE2fWDbeR7Vr2sGmNtGFC");//local 
+//const DEX_PID = new PublicKey("H5mx2D3gP1HNigC35nCbz46GgcGku8BinajyizmFGAkW");
 
 async function setupTwoMarkets({ provider  } , accounts,PoolM) {
   // Setup mints with initial tokens owned by the provider.
@@ -352,8 +353,7 @@ async function listMarket({
     dexProgramId
   );
 
-console.log("baseVault ",baseVault.publicKey.toBase58())
-console.log("quoteVault ",quoteVault.publicKey.toBase58())
+console.log(" market.publicKey ", market.publicKey.toBase58(),"wallet.publicKey ",wallet.publicKey.toBase58())
   const tx1 = new Transaction();
   tx1.add(
      SystemProgram.createAccount({
@@ -457,6 +457,7 @@ console.log("quoteVault ",quoteVault.publicKey.toBase58())
       connection,
       signedTransaction.serialize()
     );
+    console.log("tx txtxtxtxtxtxtx ",tx)
  
   }
 
